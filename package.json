@@ -1,0 +1,23 @@
+{
+  "name": "teste-santander",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brvianna/teste-santander.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brvianna/teste-santander/issues"
+  },
+  "homepage": "https://github.com/brvianna/teste-santander#readme",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^4.7.4"
+  }
+}
