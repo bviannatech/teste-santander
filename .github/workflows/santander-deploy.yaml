@@ -9,8 +9,21 @@ permissions:
   actions: read
 
 jobs:
-  build-push:
-    needs: unit-test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 12.x
+        cache: 'npm'
+
+    - name: npm install
+      run: |
+        npm install
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -30,7 +43,7 @@ jobs:
           docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/santander:${{ github.sha }}                 
 
   deploy-aks-stage:
-    needs: build-push-to-acr
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
