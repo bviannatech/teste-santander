@@ -41,26 +41,63 @@ jobs:
         docker build -t ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/santander:${{ github.sha }} .
         docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/santander:${{ github.sha }}
 
-    - name: Send mail
-      if: always()
-      uses: dawidd6/action-send-mail@v2
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        #username: ${{ secrets.EMAIL_USERNAME }}
-        #password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
-        body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
-        to: bruno.svianna.it@gmail.com
-        from: Bruno Viana
-        secure: true
-        ignore_cert: true
-        convert_markdown: true
-        priority: low
+    #- name: Send mail
+    #  if: always()
+    #  uses: dawidd6/action-send-mail@v2
+    #  with:
+    #    server_address: smtp.gmail.com
+    #    server_port: 465
+    #    #username: ${{ secrets.EMAIL_USERNAME }}
+    #    #password: ${{ secrets.EMAIL_PASSWORD }}
+    #    subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+    #    body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+    #    to: bruno.svianna.it@gmail.com
+    #    from: Bruno Viana
+    #    secure: true
+    #    ignore_cert: true
+    #    convert_markdown: true
+    #    priority: low
+
+  release:
+    name: build_release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: build
+        run: make build
+      - name: version
+        run: echo "::set-output name=version::$(./bin/santander --version)"
+        id: version
+      - name: build artifacts
+        run: make build-linux
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.TOKEN }}
+      - name: upload linux artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bin/santander.linux-amd64.tar.gz
+          asset_name: santander.linux-amd64.tar.gz
+          asset_content_type: application/gzip            
 
   deploy-aks-stage:
     needs: build
-    environemnt: dev
+    environment: dev
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -92,19 +129,19 @@ jobs:
           images: |
             ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/santander:${{ github.sha }}
 
-      - name: Send mail
-        if: always()
-        uses: dawidd6/action-send-mail@v2
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          #username: ${{ secrets.EMAIL_USERNAME }}
-          #password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
-          body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
-          to: bruno.svianna.it@gmail.com
-          from: Bruno Viana
-          secure: true
-          ignore_cert: true
-          convert_markdown: true
-          priority: low      
+      #- name: Send mail
+      #  if: always()
+      #  uses: dawidd6/action-send-mail@v2
+      #  with:
+      #    server_address: smtp.gmail.com
+      #    server_port: 465
+      #    #username: ${{ secrets.EMAIL_USERNAME }}
+      #    #password: ${{ secrets.EMAIL_PASSWORD }}
+      #    subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+      #    body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+      #    to: bruno.svianna.it@gmail.com
+      #    from: Bruno Viana
+      #    secure: true
+      #    ignore_cert: true
+      #    convert_markdown: true
+      #    priority: low      
