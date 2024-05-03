@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: santander
+  namespace: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: santander
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: santander  
+    spec:
+      containers:
+        - name: santander
+          image: eafk8scr.azurecr.io/esantander:${{ github.sha }}
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 3000
+            name: appport
+            protocol: TCP
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "128m"
+            limits:
+              memory: "528Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: santander-svc
+  namespace: frontend
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: santander
+  type: ClusterIP

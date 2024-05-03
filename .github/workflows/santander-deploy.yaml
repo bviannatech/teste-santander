@@ -38,7 +38,24 @@ jobs:
     - name: Build and Push image to ACR
       run: |
         docker build -t ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/santander:${{ github.sha }} .
-        docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/santander:${{ github.sha }}                 
+        docker push ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/santander:${{ github.sha }}
+
+    - name: Send mail
+      if: always()
+      uses: dawidd6/action-send-mail@v2
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        # email subject
+        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+        # email body as text
+        body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+        # comma-separated string, send email to
+        to: bruno.svianna.it@gmail.com
+        # from email name
+        from: Bruno Viana
 
   deploy-aks-stage:
     needs: build
@@ -58,7 +75,7 @@ jobs:
         id: set-context
         uses: Azure/aks-set-context@v3
         with:          
-          resource-group: ${{ secrets.RESOURCE_GROUP }}
+          resource-group: ${{ secrets.RESOURCE_GROUP_SR }}
           cluster-name: ${{ secrets.CLUSTER_NAME }}
           admin: true
           use-kubelogin: false
@@ -71,4 +88,23 @@ jobs:
           manifests: |
             manifests/santander-deploy.yaml
           images: |
-            ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/santander:${{ github.sha }}    
+            ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/santander:${{ github.sha }}
+
+      - name: Send mail
+        if: always()
+        uses: dawidd6/action-send-mail@v2
+        with:
+          # mail server settings
+          server_address: smtp.gmail.com
+          server_port: 465
+          # user credentials
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          # email subject
+          subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+          # email body as text
+          body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+          # comma-separated string, send email to
+          to: johndoe@gmail.com,doejohn@gmail.com
+          # from email name
+          from: John Doe            
