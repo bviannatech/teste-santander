@@ -87,6 +87,6 @@ jobs:
           namespace: frontend
           actions: deploy
           manifests: |
-            manifests/santander-deploy.yaml
+            manifest/santander-deploy.yaml
           images: |
             ${{ secrets.ACR_REGISTRY_NAME }}.azurecr.io/santander:${{ github.sha }}
