@@ -73,17 +73,7 @@ jobs:
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.TOKEN }}
-
-      - name: upload linux artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./santander.linux-amd64.tar.gz
-          asset_name: santander.linux-amd64.tar.gz
-          asset_content_type: application/gzip
-
+          
   deploy-aks-stage:
     needs: build
     runs-on: ubuntu-latest
