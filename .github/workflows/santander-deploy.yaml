@@ -17,7 +17,7 @@ jobs:
        uses: trstringer/manual-approval@v1
        timeout-minutes: 60
        with:
-        secret: ${{ github.TOKEN }}
+        secret: ${{ github.INPUT_APPROVERS }}
         approvers: ${{ github.APPROVERS }}
         issue-body: "Approve Build and Deploy" 
 
