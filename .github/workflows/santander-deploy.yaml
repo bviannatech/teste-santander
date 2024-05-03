@@ -3,6 +3,8 @@ name: Santander - Teste
 on:
   push:
     branches: main
+    tags:
+      - 'v*'
 
 permissions:
   id-token: write
