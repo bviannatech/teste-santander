@@ -10,6 +10,20 @@ permissions:
 
 jobs:
   release:
+    name: build_release
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: build
+        run: npm build
+      - name: version
+        run: echo "::set-output name=version::$(./bin/santander --version)"
+        id: version
+      - name: build artifacts
+        run: make build-linux
     name: create_release
     runs-on: ubuntu-latest
     steps:
@@ -26,13 +40,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.TOKEN }}
 
-      - name: Upload Release Asset
-        id: upload-release-asset 
+  - name: upload linux artifact
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ github.TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./santander.zip
-          asset_name: santander.zip
-          asset_content_type: application/zip        
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./bin/santander.linux-amd64.tar.gz
+          asset_name: santander.linux-amd64.tar.gz
+          asset_content_type: application/gzip
+     #- name: upload darwin artifact
+     #  uses: actions/upload-release-asset@v1
+     #  env:
+     #    GITHUB_TOKEN: ${{ github.token }}
+     #  with:
+     #    upload_url: ${{ steps.create_release.outputs.upload_url }}
+     #    asset_path: ./bin/santander.darwin-amd64.tar.gz
+     #    asset_name: santander.darwin-amd64.tar.gz
+     #    asset_content_type: application/gzip
+     # - name: upload windows artifact
+     #   uses: actions/upload-release-asset@v1
+     #   env:
+     #     GITHUB_TOKEN: ${{ github.token }}
+     #   with:
+     #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+     #     asset_path: ./bin/santander.windows-amd64.zip
+     #     asset_name: santander.windows-amd64.zip
+     #     asset_content_type: application/zip

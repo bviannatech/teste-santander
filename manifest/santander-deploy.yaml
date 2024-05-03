@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: santander
-          image: eafk8scr.azurecr.io/esantander:${{ github.sha }}
+          image: eafk8scr.azurecr.io/santander:${{ github.sha }}
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 3000
