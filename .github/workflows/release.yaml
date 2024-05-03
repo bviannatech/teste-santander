@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write
 
+jobs:
   release:
     name: create_release
     runs-on: ubuntu-latest
