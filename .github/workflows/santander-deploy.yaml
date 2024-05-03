@@ -58,24 +58,6 @@ jobs:
     #    convert_markdown: true
     #    priority: low
 
-  release:
-    name: build_release
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-      - name: release
-        uses: actions/create-release@v1
-        id: create_release
-        with:
-          draft: false
-          prerelease: false
-          release_name: Release ${{ github.ref }}
-          tag_name: ${{ github.ref }}
-        env:
-          GITHUB_TOKEN: ${{ github.TOKEN }}        
-
   deploy-aks-stage:
     needs: build
     runs-on: ubuntu-latest
@@ -94,7 +76,7 @@ jobs:
         id: set-context
         uses: Azure/aks-set-context@v3
         with:          
-          resource-group: ${{ secrets.RESOURCE_GROUP_SR }}
+          resource-group: ${{ secrets.RESOURCE_GROUP }}
           cluster-name: ${{ secrets.CLUSTER_NAME }}
           admin: true
           use-kubelogin: false
