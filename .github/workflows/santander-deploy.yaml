@@ -10,23 +10,12 @@ permissions:
   actions: read
 
 jobs:
-  approvers:
-    runs-on: ubuntu-latest
-    steps:
-     - name: manual approve pull request
-       uses: trstringer/manual-approval@v1
-       timeout-minutes: 60
-       with:
-        secret: ${{ github.TOKEN }}
-        approvers: ${{ github.INPUT_APPROVERS }}
-        issue-body: "Approve Build and Deploy" 
 
   build:
     needs: approvers
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
@@ -71,6 +60,7 @@ jobs:
 
   deploy-aks-stage:
     needs: build
+    environemnt: dev
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
