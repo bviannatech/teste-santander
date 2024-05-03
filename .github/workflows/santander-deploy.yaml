@@ -46,8 +46,8 @@ jobs:
       with:
         server_address: smtp.gmail.com
         server_port: 465
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
+        #username: ${{ secrets.EMAIL_USERNAME }}
+        #password: ${{ secrets.EMAIL_PASSWORD }}
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
         body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
         to: bruno.svianna.it@gmail.com
@@ -94,17 +94,15 @@ jobs:
         if: always()
         uses: dawidd6/action-send-mail@v2
         with:
-          # mail server settings
           server_address: smtp.gmail.com
           server_port: 465
-          # user credentials
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          # email subject
+          #username: ${{ secrets.EMAIL_USERNAME }}
+          #password: ${{ secrets.EMAIL_PASSWORD }}
           subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
-          # email body as text
           body: ${{ github.job }} job in worflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
-          # comma-separated string, send email to
-          to: johndoe@gmail.com,doejohn@gmail.com
-          # from email name
-          from: John Doe            
+          to: bruno.svianna.it@gmail.com
+          from: Bruno Viana
+          secure: true
+          ignore_cert: true
+          convert_markdown: true
+          priority: low      
