@@ -80,7 +80,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-        #  asset_path: ./bin/santander.linux-amd64.tar.gz
+          asset_path: ./santander.linux-amd64.tar.gz
           asset_name: santander.linux-amd64.tar.gz
           asset_content_type: application/gzip
 
