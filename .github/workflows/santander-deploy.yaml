@@ -68,7 +68,7 @@ jobs:
         with:
           draft: false
           prerelease: false
-          release_name: ${{ github.run_number }}
+          release_name: v.${{ github.run_number }}
           tag_name: ${{ github.run_number }}
           body_path: CHANGELOG.md
         env:
