@@ -58,7 +58,7 @@ jobs:
         id: version
 
       - name: build artifacts
-        run: tsc build-linux
+        run: tsc --build
 
       - name: release
         uses: actions/create-release@v1
